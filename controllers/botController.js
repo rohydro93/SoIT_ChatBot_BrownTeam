@@ -46,7 +46,7 @@ function getUnansweredQuestions() {
  */
 function getLocationIndexFromPrompt(prompt) {
     console.log(`${new Date().toISOString()} :: GETTING LOCATION`);
-    const index = getLocationIndexFromPrompt(prompt);
+    const index = locations.findIndex(location => location.title.toLowerCase() === prompt.toLowerCase());
     console.log("Matched location index:", index);
     if (index > -1) {
         console.log("Matched location title:", locations[index].title);
