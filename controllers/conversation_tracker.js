@@ -3,7 +3,7 @@ const path = require('path');
 const filePath = path.join(__dirname, '../data/chat_session_logging.json'); // Creates a JSON file to store conversations
 
 // Function to log conversations
-function addConversation(ticket, userType, schoolEmail, from, message) {
+function addConversation(ticket, userType, schoolEmail, from, message, intent) {
     let conversations = [];
     if (fs.existsSync(filePath)) {
         conversations = JSON.parse(fs.readFileSync(filePath));
@@ -11,6 +11,7 @@ function addConversation(ticket, userType, schoolEmail, from, message) {
     let convo = conversations.find(c => c.ticket === ticket);
     if (convo) {
         // Append to existing conversation
+        convo.currentIntent = intent; // Update intent if provided
         convo.conversation.push({ from, message });
     } else {
         // Create new conversation
@@ -19,7 +20,8 @@ function addConversation(ticket, userType, schoolEmail, from, message) {
             userType,
             schoolEmail,
             conversation: [{ from, message }],
-            date: new Date().toISOString()
+            date: new Date().toISOString(),
+            currentIntent: intent
         };
         conversations.push(convo);
     }

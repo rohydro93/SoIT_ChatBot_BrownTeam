@@ -3,7 +3,7 @@ const path = require('path');
 const fuzz = require('fuzzball'); // NPM Package Info https://www.npmjs.com/package/fuzzball
 const { responses, locations } = require('../data/database'); // Stand-in for external MongoDB instance
 const unansweredFilePath = path.join(__dirname, '../data/unanswered_inquiries.json'); // File to store unanswered/unmatched inquiries
-const { addConversation } = require('./conversation_tracker'); // 
+const { addConversation, getConversation } = require('./conversation_tracker'); // 
 
 
 
@@ -88,6 +88,7 @@ module.exports.query = (req, res) => {
     // Build intent-to-patterns mapping (all patterns lowercased)
     const intentPatterns = {};
     for (const resp of responses) {
+        console.log("Processing response intent:", resp.intent);
         if (resp.intent) {
             if (!intentPatterns[resp.intent]) intentPatterns[resp.intent] = [];
             if (Array.isArray(resp.pattern)) {
@@ -97,6 +98,7 @@ module.exports.query = (req, res) => {
             }
         }
     }
+
     // Improved intent detection: whole word and fuzzy match
     let detectedIntent = null;
     let matchedResponse = null;
@@ -122,9 +124,11 @@ module.exports.query = (req, res) => {
         if (detectedIntent) break;
     }
     if (detectedIntent) {
+        console.log(`${new Date().toISOString()} :: DETECTED INTENT: ${detectedIntent}`);
         matchedResponse = responses.find(r => r.intent === detectedIntent);
     }
     if (!matchedResponse) {
+        console.log(`${new Date().toISOString()} :: NO INTENT DETECTED, FALLING BACK TO PATTERN MATCHING`);
         // Fallback to pattern matching if no intent detected
         for (const resp of responses) {
             if (Array.isArray(resp.pattern)) {
@@ -183,15 +187,21 @@ module.exports.query = (req, res) => {
         if (matchedResponse.url) {
             response += `<br><br><a href='${matchedResponse.url}' target='_blank'>${matchedResponse.link}${suffix}`;
         }
+    } 
+    const session = getConversation(ticket);
+    
+    if (session?.lastIntent === "ADDRESS_LOOKUP") {
+        response = "I can look that up for you. Which campus are you asking about?";
+    } else if (session?.lastIntent === "PHONE_LOOKUP") {
+        response = "Do you need the phone number for a specific campus?";
     } else {
         response = errorStatements[n];
-        addUnansweredQuestion(prompt, userType, schoolEmail);
     }
     // Always log unanswered if error statement is used
     if (errorStatements.includes(response)) {
         addUnansweredQuestion(prompt, userType, schoolEmail);
     }
-    addConversation(ticket, userType, schoolEmail, 'bot', response);
+    addConversation(ticket, userType, schoolEmail, 'bot', response, detectedIntent);
     console.log(`${new Date().toISOString()} :: BOT RESPONSE: `);
     console.log(response);
     res.json({response});
