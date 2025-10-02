@@ -36,124 +36,11 @@ const responses = [
         link: "Campus Locations"
     },
     {
-        intent: "dean_info_indy",
+        intent: "dean_info",
         pattern: [
-            "who is the dean of the school of it in indy", "dean of it in indy", "who is the dean of the school of it in indianapolis",
-            "who is the dean of IT at the indy campus", "who is the dean for the school of IT in indy", "dean of it in indianapolis",
-            "dean of it in indianapolis", "who is the dean for the school of IT in indianapolis"
-        ],
-        reply: "The Dean of the School of IT in Indianapolis is Patrick Benner",
-        url: "https://whitepages.ivytech.edu/profile/pbenner/",
-        link: "White Pages Entry"
+            "who is the dean"
+        ]
     },
-    {
-        intent: "dean_info_hamilton",
-        pattern: [
-            "who is the dean of the school of it in hamilton county", "dean of it in hamilton","dean of it in hamilton county", 
-            "who is the dean of the school of it in hamilton","who is the dean of IT at the hamilton county campus",
-            "who is the dean for the school of IT in hamilton county"
-        ],
-        reply: "The Dean of the School of IT in Hamilton County is Nicol Bradberry",
-        url: "https://whitepages.ivytech.edu/profile/nbradberry/",
-        link: "White Pages Entry"
-    },
-    {
-        intent: "dean_info_bloomington",
-        pattern: [
-            "who is the dean of the school of it in bloomington", "dean of it in bloomington", 
-            "who is the dean of the school of it in bloomington","who is the dean of IT at the bloomington campus",
-            "who is the dean for the school of IT in bloomington "
-        ],
-        reply: "The Dean of the School of IT in Bloomington is Chris Carroll",
-        url: "https://whitepages.ivytech.edu/profile/rcarroll/",
-        link: "White Pages Entry"
-    },
-    {
-        intent: "dean_info_lafayette",
-        pattern: [
-            "who is the dean of the school of it in lafayette", "dean of it in lafayette", 
-            "who is the dean of the school of it in lafayette","who is the dean of IT at the lafayette campus",
-            "who is the dean for the school of IT in lafayette "
-        ],
-        reply: "The Dean of the School of IT in Lafayette is Andrew Gibbs",
-        url: "https://whitepages.ivytech.edu/profile/agibbs33/",
-        link: "White Pages Entry"
-    },
-    {
-        intent: "dean_info_lake_county",
-        pattern: [
-            "who is the dean of the school of it in lake county", "dean of it in lake county", 
-            "who is the dean of the school of it in lake county","who is the dean of IT at the lake county campus",
-            "who is the dean for the school of IT in lake county "
-        ],
-        reply: "The Dean of the School of IT in Lake County is Feihong Liu",
-        url: "https://whitepages.ivytech.edu/profile/fliu9/",
-        link: "White Pages Entry"
-    },
-    {
-        intent: "dean_info_terre_haute",
-        pattern: [
-            "who is the dean of the school of it in terre haute", "dean of it in terre haute", 
-            "who is the dean of the school of it in terre haute","who is the dean of IT at the terre haute campus",
-            "who is the dean for the school of IT in terre haute "
-        ],
-        reply: "The Dean of the School of IT in Terre Haute is Logan Pearison",
-        url: "https://whitepages.ivytech.edu/profile/lpearison1/",
-        link: "White Pages Entry"
-    },
-    {
-        intent: "dean_info_columbus",
-        pattern: [
-            "who is the dean of the school of it in columbus", "dean of it in columbus", 
-            "who is the dean of the school of it in columbus","who is the dean of IT at the columbus campus",
-            "who is the dean for the school of IT in columbus "
-        ],
-        reply: "The Dean of the School of IT in Columbus is Pam Schmelz",
-        url: "https://whitepages.ivytech.edu/profile/pschmelz/",
-        link: "White Pages Entry"
-    },
-    {
-    intent: "dean_info_no_dean",
-    pattern: [
-        "who is the dean of the school of it in anderson", "dean of it in anderson", "who is the dean for IT at anderson campus",
-        "who is the dean of the school of it in batesville", "dean of it in batesville", "who is the dean for IT at batesville campus",
-        "who is the dean of the school of it in connersville", "dean of it in connersville", "who is the dean for IT at connersville campus",
-        "who is the dean of the school of it in crawfordsville", "dean of it in crawfordsville", "who is the dean for IT at crawfordsville campus",
-        "who is the dean of the school of it in crown point", "dean of it in crown point", "who is the dean for IT at crown point campus",
-        "who is the dean of the school of it in east chicago", "dean of it in east chicago", "who is the dean for IT at east chicago campus",
-        "who is the dean of the school of it in elkhart", "dean of it in elkhart", "who is the dean for IT at elkhart campus",
-        "who is the dean of the school of it in evansville", "dean of it in evansville", "who is the dean for IT at evansville campus",
-        "who is the dean of the school of it in fort wayne", "dean of it in fort wayne", "who is the dean for IT at fort wayne campus",
-        "who is the dean of the school of it in frankfort", "dean of it in frankfort", "who is the dean for IT at frankfort campus",
-        "who is the dean of the school of it in franklin", "dean of it in franklin", "who is the dean for IT at franklin campus",
-        "who is the dean of the school of it in gary", "dean of it in gary", "who is the dean for IT at gary campus",
-        "who is the dean of the school of it in greencastle", "dean of it in greencastle", "who is the dean for IT at greencastle campus",
-        "who is the dean of the school of it in kokomo", "dean of it in kokomo", "who is the dean for IT at kokomo campus",
-        "who is the dean of the school of it in warsaw", "dean of it in warsaw", "who is the dean for IT at warsaw campus",
-        "who is the dean of the school of it in kosciousko county", "dean of it in kosciousko county", "who is the dean for IT at kosciousko county campus",
-        "who is the dean of the school of it in la porte", "dean of it in la porte", "who is the dean for IT at la porte campus",
-        "who is the dean of the school of it in lawrence", "dean of it in lawrence", "who is the dean for IT at lawrence campus",
-        "who is the dean of the school of it in lawrenceburg", "dean of it in lawrenceburg", "who is the dean for IT at lawrenceburg campus",
-        "who is the dean of the school of it in logansport", "dean of it in logansport", "who is the dean for IT at logansport campus",
-        "who is the dean of the school of it in madison", "dean of it in madison", "who is the dean for IT at madison campus",
-        "who is the dean of the school of it in michigan city", "dean of it in michigan city", "who is the dean for IT at michigan city campus",
-        "who is the dean of the school of it in muncie", "dean of it in muncie", "who is the dean for IT at muncie campus",
-        "who is the dean of the school of it in new castle", "dean of it in new castle", "who is the dean for IT at new castle campus",
-        "who is the dean of the school of it in perkins technology center", "dean of it in perkins technology center", "who is the dean for IT at perkins technology center",
-        "who is the dean of the school of it in richmond", "dean of it in richmond", "who is the dean for IT at richmond campus",
-        "who is the dean of the school of it in peru", "dean of it in peru", "who is the dean for IT at peru campus",
-        "who is the dean of the school of it in plainfield", "dean of it in plainfield", "who is the dean for IT at plainfield campus",
-        "who is the dean of the school of it in rushville", "dean of it in richmond", "who is the dean for IT at richmond campus",
-        "who is the dean of the school of it in scottsburg", "dean of it in scottsburg", "who is the dean for IT at scottsburg campus",
-        "who is the dean of the school of it in shelbyville", "dean of it in shelbyville", "who is the dean for IT at shelbyville campus",
-        "who is the dean of the school of it in sellersburg", "dean of it in sellersburg", "who is the dean for IT at sellersburg campus",
-        "who is the dean of the school of it in south bend", "dean of it in south bend", "who is the dean for IT at south bend campus",
-        "who is the dean of the school of it in tell city", "dean of it in tell city", "who is the dean for IT at tell city campus",
-        "who is the dean of the school of it in valparaiso", "dean of it in valparaiso", "who is the dean for IT at valparaiso campus",
-    ],
-    reply: "Currently, there is no designated Dean for Information Technology at your campus. Please contact the campus administration for more information."
-    },
-
     {
         intent: "admissions_info_general",
         pattern: ["can you give me information about admissions", "admissions"],
@@ -215,7 +102,7 @@ const responses = [
     {
         intent : "address_info",
         pattern: [
-            "campus address", "campus location", 
+            "campus address", "campus location", "what is the address for",
             "where is ivytech located", "ivytech address",
             "directions to campus", "how do i get to campus"
         ]
@@ -705,6 +592,11 @@ const locations = [
         email: "askindianapolis@ivytech.edu",
         url: "/indianapolis/index.html",
         contactDirectoryUrl: "https://whitepages.ivytech.edu/?first_name=&last_name=&userid=&location=indianapolis&role=faculty&role=staff&title=&bee_syrup_tun=&submit=+Search+",
+        dean: {
+            reply: "The Dean of the School of IT in Indianapolis is Patrick Benner",
+            url: "https://whitepages.ivytech.edu/profile/pbenner/",
+            link: "White Pages Entry"
+        }
     },
     {
         position: { lat: 40.5049668, lng: -86.1064558 },

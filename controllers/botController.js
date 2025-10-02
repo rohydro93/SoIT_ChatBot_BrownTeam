@@ -159,58 +159,90 @@ module.exports.query = (req, res) => {
     }
     console.log(`${new Date().toISOString()} :: MATCHED RESPONSE: ${matchedResponse !== null}`);
     console.log(`${new Date().toISOString()} :: MATCHED RESPONSE TYPE: ${matchedResponse?.type}`);
+    const locIndex = getLocationIndexFromPrompt(prompt);
 
-    // Special logic for address/phone lookups
-    if (matchedResponse && (matchedResponse.intent === 'address_info')) {
-        const index = getLocationIndexFromPrompt(prompt);
-        console.log("Matched location index:", index);
-        if (index > -1) {
-            console.log("Matched location title:", locations[index].title);
-            response = `<strong>${locations[index].title} Campus:</strong><br>`;
-            response += locations[index].address;
-            response += `<br><br><a href='https://www.ivytech.edu/${locations[index].url}' target='_blank'>Campus Page`;
-            response += `<br><a href='https://www.google.com/maps/search/?api=1&query=${locations[index].position.lat},${locations[index].position.lng}' target='_blank'>Google Maps`;
-        } else {
-            response = "Which campus are you asking about?"
+    if(matchedResponse) {
+        switch(matchedResponse.intent){
+            case 'address_info':
+                if (locIndex > -1) {
+                    console.log("Matched location title:", locations[locIndex].title);
+                    response = `<strong>${locations[locIndex].title} Campus:</strong><br>`;
+                    response += locations[locIndex].address;
+                    response += `<br><br><a href='https://www.ivytech.edu/${locations[locIndex].url}' target='_blank'>Campus Page`;
+                    response += `<br><a href='https://www.google.com/maps/search/?api=1&query=${locations[locIndex].position.lat},${locations[locIndex].position.lng}' target='_blank'>Google Maps`;
+                } else {
+                    response = "Which campus are you asking about?"
+                }
+                break;
+            case 'phone_number_info':
+                if(locIndex > -1) {
+                    response = `<strong>${locations[locIndex].title} Contact Info:</strong><br>`;
+                    response += `<i class='bx bxs-phone-call'></i>&nbsp;&nbsp;<a href='tel:${locations[locIndex].phone}'>${locations[locIndex].phone}</a><br>`;
+                    response += `<i class='bx bxs-envelope' ></i>&nbsp;&nbsp;<a href="mailto:${locations[locIndex].email}">${locations[locIndex].email}</a>`;
+                    response += `<br><br><a href='https://www.ivytech.edu/${locations[locIndex].url}' target='_blank'>Campus Page${suffix}`;
+                } else {
+                    response = "Which campus are you talking about? Or would you like the 24 hour toll free number?";
+                }
+                break;
+            case 'dean_info':
+                if(locIndex > -1 && locations[locIndex]?.dean) {
+                    response = `<strong>${locations[locIndex].dean.reply}</strong><br>`;
+                    response += `<br><br><a href='https://www.ivytech.edu/${locations[locIndex].dean.url}' target='_blank'>Campus Page${suffix}`;
+                } else if(locIndex > -1) {
+                    response = "Currently, there is no designated Dean for Information Technology at this campus. Please contact the campus administration for more information.";
+                }
+                else {
+                    response = "Which campus are you asking about?"
+                }
+                break;    
+            default:
+                response = matchedResponse.reply;
+                if (matchedResponse.url) {
+                    response += `<br><br><a href='${matchedResponse.url}' target='_blank'>${matchedResponse.link}${suffix}`;
+                }
+                break;    
         }
-    } else if (matchedResponse && matchedResponse.intent === 'phone_number_info') {
-        const index = getLocationIndexFromPrompt(prompt);
-        if(index > -1) {
-            response = `<strong>${locations[index].title} Contact Info:</strong><br>`;
-            response += `<i class='bx bxs-phone-call'></i>&nbsp;&nbsp;<a href='tel:${locations[index].phone}'>${locations[index].phone}</a><br>`;
-            response += `<i class='bx bxs-envelope' ></i>&nbsp;&nbsp;<a href="mailto:${locations[index].email}">${locations[index].email}</a>`;
-            response += `<br><br><a href='https://www.ivytech.edu/${locations[index].url}' target='_blank'>Campus Page${suffix}`;
-        } else {
-            response = "Which campus are you talking about? Or would you like the 24 hour toll free number?";
+    }
+    else if(session) {
+        switch(session.currentIntent){
+            case 'address_info':
+                if (locIndex > -1) {
+                    console.log("Matched location title:", locations[locIndex].title);
+                    response = `<strong>${locations[locIndex].title} Campus:</strong><br>`;
+                    response += locations[locIndex].address;
+                    response += `<br><br><a href='https://www.ivytech.edu/${locations[locIndex].url}' target='_blank'>Campus Page`;
+                    response += `<br><a href='https://www.google.com/maps/search/?api=1&query=${locations[locIndex].position.lat},${locations[locIndex].position.lng}' target='_blank'>Google Maps`;
+                } else {
+                    response = "I can look that up for you. Which campus do you want the address of?"
+                }
+                break;
+            case 'phone_number_info':
+                if(locIndex > -1) {
+                    response = `<strong>${locations[locIndex].title} Contact Info:</strong><br>`;
+                    response += `<i class='bx bxs-phone-call'></i>&nbsp;&nbsp;<a href='tel:${locations[locIndex].phone}'>${locations[locIndex].phone}</a><br>`;
+                    response += `<i class='bx bxs-envelope' ></i>&nbsp;&nbsp;<a href="mailto:${locations[locIndex].email}">${locations[locIndex].email}</a>`;
+                    response += `<br><br><a href='https://www.ivytech.edu/${locations[locIndex].url}' target='_blank'>Campus Page${suffix}`;
+                } else {
+                    response = "I can look that up for you. Which campus do you want the phone number of?";
+                }
+                break;
+            case 'dean_info':
+                if(locIndex > -1 && locations[locIndex]?.dean) {
+                    response = `<strong>${locations[locIndex].dean.reply}</strong><br>`;
+                    response += `<br><br><a href='https://www.ivytech.edu/${locations[locIndex].dean.url}' target='_blank'>Campus Page${suffix}`;
+                } else if(locIndex > -1) {
+                    response = "Currently, there is no designated Dean for Information Technology at this campus. Please contact the campus administration for more information.";
+                }
+                else {
+                    response = "Which campus are you asking about?"
+                }
+                break;    
+            default:
+                response = errorStatements[n];
+                break;    
         }
-    } else if (matchedResponse) {
-        response = matchedResponse.reply;
-        if (matchedResponse.url) {
-            response += `<br><br><a href='${matchedResponse.url}' target='_blank'>${matchedResponse.link}${suffix}`;
-        }
-    } else if (session?.currentIntent === 'address_info') {
-        const index = getLocationIndexFromPrompt(prompt);
-        console.log("Matched location index:", index);
-        if (index > -1) {
-            console.log("Matched location title:", locations[index].title);
-            response = `<strong>${locations[index].title} Campus:</strong><br>`;
-            response += locations[index].address;
-            response += `<br><br><a href='https://www.ivytech.edu/${locations[index].url}' target='_blank'>Campus Page`;
-            response += `<br><a href='https://www.google.com/maps/search/?api=1&query=${locations[index].position.lat},${locations[index].position.lng}' target='_blank'>Google Maps`;
-        } else {
-            response = "I can look that up for you. Which campus do you want the address of?"
-        }
-    } else if (session?.currentIntent === 'phone_number_info') {
-        const index = getLocationIndexFromPrompt(prompt);
-        if(index > -1) {
-            response = `<strong>${locations[index].title} Contact Info:</strong><br>`;
-            response += `<i class='bx bxs-phone-call'></i>&nbsp;&nbsp;<a href='tel:${locations[index].phone}'>${locations[index].phone}</a><br>`;
-            response += `<i class='bx bxs-envelope' ></i>&nbsp;&nbsp;<a href="mailto:${locations[index].email}">${locations[index].email}</a>`;
-            response += `<br><br><a href='https://www.ivytech.edu/${locations[index].url}' target='_blank'>Campus Page${suffix}`;
-        } else {
-            response = "I can look that up for you. Which campus do you want the phone number of?";
-        }
-    } else {
+    }
+    else {
         response = errorStatements[n];
     }
 
