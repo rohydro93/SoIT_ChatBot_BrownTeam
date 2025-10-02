@@ -3,7 +3,7 @@ const path = require('path');
 const fuzz = require('fuzzball'); // NPM Package Info https://www.npmjs.com/package/fuzzball
 const { responses, locations } = require('../data/database'); // Stand-in for external MongoDB instance
 const unansweredFilePath = path.join(__dirname, '../data/unanswered_inquiries.json'); // File to store unanswered/unmatched inquiries
-const { addConversation } = require('./conversation_tracker'); // 
+const { addConversation, getConversation } = require('./conversation_tracker'); // 
 
 
 
@@ -81,13 +81,12 @@ module.exports.query = (req, res) => {
     const ticket = req.body.ticketId;
     let response = "";
     const suffix = "&nbsp;<i class='bx bx-link-external'></i></a>"; // External link icon
-    
-    // Track user message in file-based JSON
-    addConversation(ticket, userType, schoolEmail, 'user', prompt);
+    const session = getConversation(ticket);
 
     // Build intent-to-patterns mapping (all patterns lowercased)
     const intentPatterns = {};
     for (const resp of responses) {
+        console.log("Processing response intent:", resp.intent);
         if (resp.intent) {
             if (!intentPatterns[resp.intent]) intentPatterns[resp.intent] = [];
             if (Array.isArray(resp.pattern)) {
@@ -97,6 +96,7 @@ module.exports.query = (req, res) => {
             }
         }
     }
+
     // Improved intent detection: whole word and fuzzy match
     let detectedIntent = null;
     let matchedResponse = null;
@@ -122,9 +122,11 @@ module.exports.query = (req, res) => {
         if (detectedIntent) break;
     }
     if (detectedIntent) {
+        console.log(`${new Date().toISOString()} :: DETECTED INTENT: ${detectedIntent}`);
         matchedResponse = responses.find(r => r.intent === detectedIntent);
     }
     if (!matchedResponse) {
+        console.log(`${new Date().toISOString()} :: NO INTENT DETECTED, FALLING BACK TO PATTERN MATCHING`);
         // Fallback to pattern matching if no intent detected
         for (const resp of responses) {
             if (Array.isArray(resp.pattern)) {
@@ -155,8 +157,11 @@ module.exports.query = (req, res) => {
             if (matchedResponse) break;
         }
     }
+    console.log(`${new Date().toISOString()} :: MATCHED RESPONSE: ${matchedResponse !== null}`);
+    console.log(`${new Date().toISOString()} :: MATCHED RESPONSE TYPE: ${matchedResponse?.type}`);
+
     // Special logic for address/phone lookups
-    if (matchedResponse && (matchedResponse.type === 'ADDRESS_LOOKUP' || (matchedResponse.intent && matchedResponse.intent.startsWith('address_info_')))) {
+    if (matchedResponse && (matchedResponse.intent === 'address_info')) {
         const index = getLocationIndexFromPrompt(prompt);
         console.log("Matched location index:", index);
         if (index > -1) {
@@ -166,9 +171,9 @@ module.exports.query = (req, res) => {
             response += `<br><br><a href='https://www.ivytech.edu/${locations[index].url}' target='_blank'>Campus Page`;
             response += `<br><a href='https://www.google.com/maps/search/?api=1&query=${locations[index].position.lat},${locations[index].position.lng}' target='_blank'>Google Maps`;
         } else {
-            response = errorStatements[n];
+            response = "Which campus are you asking about?"
         }
-    } else if (matchedResponse && matchedResponse.type === 'PHONE_LOOKUP') {
+    } else if (matchedResponse && matchedResponse.intent === 'phone_number_info') {
         const index = getLocationIndexFromPrompt(prompt);
         if(index > -1) {
             response = `<strong>${locations[index].title} Contact Info:</strong><br>`;
@@ -176,22 +181,44 @@ module.exports.query = (req, res) => {
             response += `<i class='bx bxs-envelope' ></i>&nbsp;&nbsp;<a href="mailto:${locations[index].email}">${locations[index].email}</a>`;
             response += `<br><br><a href='https://www.ivytech.edu/${locations[index].url}' target='_blank'>Campus Page${suffix}`;
         } else {
-            response = errorStatements[n];
+            response = "Which campus are you talking about? Or would you like the 24 hour toll free number?";
         }
     } else if (matchedResponse) {
         response = matchedResponse.reply;
         if (matchedResponse.url) {
             response += `<br><br><a href='${matchedResponse.url}' target='_blank'>${matchedResponse.link}${suffix}`;
         }
+    } else if (session?.currentIntent === 'address_info') {
+        const index = getLocationIndexFromPrompt(prompt);
+        console.log("Matched location index:", index);
+        if (index > -1) {
+            console.log("Matched location title:", locations[index].title);
+            response = `<strong>${locations[index].title} Campus:</strong><br>`;
+            response += locations[index].address;
+            response += `<br><br><a href='https://www.ivytech.edu/${locations[index].url}' target='_blank'>Campus Page`;
+            response += `<br><a href='https://www.google.com/maps/search/?api=1&query=${locations[index].position.lat},${locations[index].position.lng}' target='_blank'>Google Maps`;
+        } else {
+            response = "I can look that up for you. Which campus do you want the address of?"
+        }
+    } else if (session?.currentIntent === 'phone_number_info') {
+        const index = getLocationIndexFromPrompt(prompt);
+        if(index > -1) {
+            response = `<strong>${locations[index].title} Contact Info:</strong><br>`;
+            response += `<i class='bx bxs-phone-call'></i>&nbsp;&nbsp;<a href='tel:${locations[index].phone}'>${locations[index].phone}</a><br>`;
+            response += `<i class='bx bxs-envelope' ></i>&nbsp;&nbsp;<a href="mailto:${locations[index].email}">${locations[index].email}</a>`;
+            response += `<br><br><a href='https://www.ivytech.edu/${locations[index].url}' target='_blank'>Campus Page${suffix}`;
+        } else {
+            response = "I can look that up for you. Which campus do you want the phone number of?";
+        }
     } else {
         response = errorStatements[n];
-        addUnansweredQuestion(prompt, userType, schoolEmail);
     }
+
     // Always log unanswered if error statement is used
     if (errorStatements.includes(response)) {
         addUnansweredQuestion(prompt, userType, schoolEmail);
     }
-    addConversation(ticket, userType, schoolEmail, 'bot', response);
+    addConversation(ticket, userType, schoolEmail, 'bot', response, detectedIntent);
     console.log(`${new Date().toISOString()} :: BOT RESPONSE: `);
     console.log(response);
     res.json({response});
