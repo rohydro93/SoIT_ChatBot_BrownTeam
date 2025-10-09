@@ -21,37 +21,37 @@ function addConversation(ticket, userType, schoolEmail, from, message, intent, o
             conversation: [{ from, message }],
             date: new Date().toISOString()
         };
-        conversations.push(conversation);
+        conversations.push(convo);
     }
 
     // Always update currentIntent for every message
-    conversation.currentIntent = intent;
+    convo.currentIntent = intent;
 
     // Add the user message to the conversation
     if (from === 'user') {
         if (isFilipino && originalPrompt) {
-            conversation.conversation.push({
+            convo.conversation.push({
                 from,
                 message: `Original: ${originalPrompt} | Translated: ${message}`,
                 isFilipino,
-                currentIntent: conversation.currentIntent
+                currentIntent: convo.currentIntent
             });
         } else {
-            conversation.conversation.push({ from, message, currentIntent: conversation.currentIntent });
+            convo.conversation.push({ from, message, currentIntent: convo.currentIntent });
         }
     }
 
     // Add the bot response to the conversation
     if (from === 'bot') {
         if (isFilipino && botFilipinoResponse) {
-            conversation.conversation.push({
+            convo.conversation.push({
                 from,
                 message: `Original: ${botFilipinoResponse} | Translated: ${message}`,
                 isFilipino,
-                currentIntent: conversation.currentIntent
+                currentIntent: convo.currentIntent
             });
         } else {
-            conversation.conversation.push({ from, message, currentIntent: conversation.currentIntent });
+            convo.conversation.push({ from, message, currentIntent: convo.currentIntent });
         }
     }
 

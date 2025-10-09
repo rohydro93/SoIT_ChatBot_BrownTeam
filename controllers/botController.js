@@ -377,7 +377,7 @@ module.exports.query = (req, res) => {
                     }
                     response = mainInfo;
                     if (deanEmail) {
-                        response += `<br>Email: <a href='mailto:${deanEmail}'>${deanEmail}</a>`;
+                        response += `<br><br>Email: <a href='mailto:${deanEmail}'>${deanEmail}</a>`;
                     }
                     if (deanPhone) {
                         response += `<br>Phone: <a href='tel:${deanPhone}'>${deanPhone}</a>`;
