@@ -12,7 +12,6 @@ function addConversation(ticket, userType, schoolEmail, from, message, intent, o
     if (fs.existsSync(filePath)) {
         conversations = JSON.parse(fs.readFileSync(filePath));
     }
-<<<<<<< Updated upstream
     let convo = conversations.find(c => c.ticket === ticket);
     if (convo) {
         // Append to existing conversation
@@ -24,18 +23,6 @@ function addConversation(ticket, userType, schoolEmail, from, message, intent, o
             userType,
             schoolEmail,
             conversation: [{ from, message }],
-=======
-    let conversation = conversations.find(c => c.ticket === ticket);
-
-    // Validate the conversation object
-    if (!conversation || typeof conversation !== 'object' || !Array.isArray(conversation.conversation)) {
-        console.warn(`${new Date().toISOString()} :: Invalid conversation structure detected. Reinitializing.`);
-        conversation = {
-            ticket,
-            userType,
-            schoolEmail,
-            conversation: [],
->>>>>>> Stashed changes
             date: new Date().toISOString()
         };
         conversations.push(conversation);

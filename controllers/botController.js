@@ -3,13 +3,8 @@ const path = require('path');
 const fuzz = require('fuzzball'); // NPM Package Info https://www.npmjs.com/package/fuzzball
 const { responses, locations } = require('../data/database'); // Stand-in for external MongoDB instance
 const unansweredFilePath = path.join(__dirname, '../data/unanswered_inquiries.json'); // File to store unanswered/unmatched inquiries
-<<<<<<< Updated upstream
-const { addConversation } = require('./conversation_tracker'); // 
-
-=======
 const { addConversation, getConversation } = require('./conversation_tracker');
 const { isFilipino, translateFilipinoToEnglish } = require('./filipino_translation'); // File for Filipino translation functions
->>>>>>> Stashed changes
 
 
 // TODO: Example URL for direct course catalog search https://catalog.ivytech.edu/search_advanced.php?cur_cat_oid=9&ecpage=1&cpage=1&ppage=1&pcpage=1&spage=1&tpage=1&search_database=Search&filter%5Bkeyword%5D=SDEV120&filter%5Bexact_match%5D=1&filter%5B3%5D=1&filter%5B31%5D=1
@@ -51,7 +46,7 @@ function getUnansweredQuestions() {
  */
 function getLocationIndexFromPrompt(prompt) {
     console.log(`${new Date().toISOString()} :: GETTING LOCATION`);
-    const index = getLocationIndexFromPrompt(prompt);
+    const index = locations.findIndex(location => location.title.toLowerCase() === prompt.toLowerCase());
     console.log("Matched location index:", index);
     if (index > -1) {
         console.log("Matched location title:", locations[index].title);
@@ -86,11 +81,6 @@ module.exports.query = (req, res) => {
     const ticket = req.body.ticketId;
     let response = "";
     const suffix = "&nbsp;<i class='bx bx-link-external'></i></a>"; // External link icon
-<<<<<<< Updated upstream
-    
-    // Track user message in file-based JSON
-    addConversation(ticket, userType, schoolEmail, 'user', prompt);
-=======
     const session = getConversation(ticket);
     let detectedIntent = null;
     let matchedResponse = null;
@@ -228,11 +218,11 @@ module.exports.query = (req, res) => {
         }
         addConversation(ticket, userType, schoolEmail, 'user', prompt, detectedIntentNonFilipino, null, false, null);
     }
->>>>>>> Stashed changes
 
     // Build intent-to-patterns mapping (all patterns lowercased)
     const intentPatterns = {};
     for (const resp of responses) {
+        console.log("Processing response intent:", resp.intent);
         if (resp.intent) {
             if (!intentPatterns[resp.intent]) intentPatterns[resp.intent] = [];
             if (Array.isArray(resp.pattern)) {
@@ -242,6 +232,7 @@ module.exports.query = (req, res) => {
             }
         }
     }
+
     // Improved intent detection: whole word and fuzzy match
     for (const [intent, patterns] of Object.entries(intentPatterns)) {
         for (const p of patterns) {
@@ -265,9 +256,11 @@ module.exports.query = (req, res) => {
         if (detectedIntent) break;
     }
     if (detectedIntent) {
+        console.log(`${new Date().toISOString()} :: DETECTED INTENT: ${detectedIntent}`);
         matchedResponse = responses.find(r => r.intent === detectedIntent);
     }
     if (!matchedResponse) {
+        console.log(`${new Date().toISOString()} :: NO INTENT DETECTED, FALLING BACK TO PATTERN MATCHING`);
         // Fallback to pattern matching if no intent detected
         for (const resp of responses) {
             if (Array.isArray(resp.pattern)) {
@@ -298,30 +291,6 @@ module.exports.query = (req, res) => {
             if (matchedResponse) break;
         }
     }
-<<<<<<< Updated upstream
-    // Special logic for address/phone lookups
-    if (matchedResponse && (matchedResponse.type === 'ADDRESS_LOOKUP' || (matchedResponse.intent && matchedResponse.intent.startsWith('address_info_')))) {
-        const index = getLocationIndexFromPrompt(prompt);
-        console.log("Matched location index:", index);
-        if (index > -1) {
-            console.log("Matched location title:", locations[index].title);
-            response = `<strong>${locations[index].title} Campus:</strong><br>`;
-            response += locations[index].address;
-            response += `<br><br><a href='https://www.ivytech.edu/${locations[index].url}' target='_blank'>Campus Page`;
-            response += `<br><a href='https://www.google.com/maps/search/?api=1&query=${locations[index].position.lat},${locations[index].position.lng}' target='_blank'>Google Maps`;
-        } else {
-            response = errorStatements[n];
-        }
-    } else if (matchedResponse && matchedResponse.type === 'PHONE_LOOKUP') {
-        const index = getLocationIndexFromPrompt(prompt);
-        if(index > -1) {
-            response = `<strong>${locations[index].title} Contact Info:</strong><br>`;
-            response += `<i class='bx bxs-phone-call'></i>&nbsp;&nbsp;<a href='tel:${locations[index].phone}'>${locations[index].phone}</a><br>`;
-            response += `<i class='bx bxs-envelope' ></i>&nbsp;&nbsp;<a href="mailto:${locations[index].email}">${locations[index].email}</a>`;
-            response += `<br><br><a href='https://www.ivytech.edu/${locations[index].url}' target='_blank'>Campus Page${suffix}`;
-        } else {
-            response = errorStatements[n];
-=======
     console.log(`${new Date().toISOString()} :: MATCHED RESPONSE: ${matchedResponse !== null}`);
     console.log(`${new Date().toISOString()} :: MATCHED RESPONSE TYPE: ${matchedResponse?.type}`);
     const locIndex = getLocationIndexFromPrompt(prompt);
@@ -408,7 +377,7 @@ module.exports.query = (req, res) => {
                     }
                     response = mainInfo;
                     if (deanEmail) {
-                        response += `<br><br>Email: <a href='mailto:${deanEmail}'>${deanEmail}</a>`;
+                        response += `<br>Email: <a href='mailto:${deanEmail}'>${deanEmail}</a>`;
                     }
                     if (deanPhone) {
                         response += `<br>Phone: <a href='tel:${deanPhone}'>${deanPhone}</a>`;
@@ -424,22 +393,17 @@ module.exports.query = (req, res) => {
             default:
                 response = errorStatements[n];
                 break;    
->>>>>>> Stashed changes
         }
-    } else if (matchedResponse) {
-        response = matchedResponse.reply;
-        if (matchedResponse.url) {
-            response += `<br><br><a href='${matchedResponse.url}' target='_blank'>${matchedResponse.link}${suffix}`;
-        }
-    } else {
-        response = errorStatements[n];
-        addUnansweredQuestion(prompt, userType, schoolEmail);
     }
+    else {
+        response = errorStatements[n];
+    }
+
     // Always log unanswered if error statement is used
     if (errorStatements.includes(response)) {
         addUnansweredQuestion(prompt, userType, schoolEmail);
     }
-    addConversation(ticket, userType, schoolEmail, 'bot', response);
+    addConversation(ticket, userType, schoolEmail, 'bot', response, detectedIntent);
     console.log(`${new Date().toISOString()} :: BOT RESPONSE: `);
     console.log(response);
     res.json({response});
