@@ -3,11 +3,16 @@ const path = require('path');
 const filePath = path.join(__dirname, '../data/chat_session_logging.json'); // Creates a JSON file to store conversations
 
 // Function to log conversations
+<<<<<<< Updated upstream
 function addConversation(ticket, userType, schoolEmail, from, message) {
+=======
+function addConversation(ticket, userType, schoolEmail, from, message, intent, originalPrompt, isFilipino, botFilipinoResponse) {
+>>>>>>> Stashed changes
     let conversations = [];
     if (fs.existsSync(filePath)) {
         conversations = JSON.parse(fs.readFileSync(filePath));
     }
+<<<<<<< Updated upstream
     let convo = conversations.find(c => c.ticket === ticket);
     if (convo) {
         // Append to existing conversation
@@ -19,10 +24,54 @@ function addConversation(ticket, userType, schoolEmail, from, message) {
             userType,
             schoolEmail,
             conversation: [{ from, message }],
+=======
+    let conversation = conversations.find(c => c.ticket === ticket);
+
+    // Validate the conversation object
+    if (!conversation || typeof conversation !== 'object' || !Array.isArray(conversation.conversation)) {
+        console.warn(`${new Date().toISOString()} :: Invalid conversation structure detected. Reinitializing.`);
+        conversation = {
+            ticket,
+            userType,
+            schoolEmail,
+            conversation: [],
+>>>>>>> Stashed changes
             date: new Date().toISOString()
         };
-        conversations.push(convo);
+        conversations.push(conversation);
     }
+
+    // Always update currentIntent for every message
+    conversation.currentIntent = intent;
+
+    // Add the user message to the conversation
+    if (from === 'user') {
+        if (isFilipino && originalPrompt) {
+            conversation.conversation.push({
+                from,
+                message: `Original: ${originalPrompt} | Translated: ${message}`,
+                isFilipino,
+                currentIntent: conversation.currentIntent
+            });
+        } else {
+            conversation.conversation.push({ from, message, currentIntent: conversation.currentIntent });
+        }
+    }
+
+    // Add the bot response to the conversation
+    if (from === 'bot') {
+        if (isFilipino && botFilipinoResponse) {
+            conversation.conversation.push({
+                from,
+                message: `Original: ${botFilipinoResponse} | Translated: ${message}`,
+                isFilipino,
+                currentIntent: conversation.currentIntent
+            });
+        } else {
+            conversation.conversation.push({ from, message, currentIntent: conversation.currentIntent });
+        }
+    }
+
     fs.writeFileSync(filePath, JSON.stringify(conversations, null, 2));
 }
 

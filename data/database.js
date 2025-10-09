@@ -6,12 +6,14 @@ const responses = [
             "good morning", "good afternoon", "good evening", 
             "howdy", "what's up"
         ],
-        reply: "Hi there! What can I help you with today?"
+        reply: "Hi there! What can I help you with today?",
+        filipino_reply: "Mabuhay! Paano kita matutulungan ngayon?",
     },
     {
         intent: "bot_status",
         pattern: ["how are you", "how's it going", "how are you doing", "are you doing great"],
-        reply: "Doing great! I'm excited to help you find the information you require!"
+        reply: "Doing great! I'm excited to help you find the information you require!",
+        filipino_reply: "Ayos lang! Excited akong tulungan ka na mahanap ang impormasyong kailangan mo!"
     },
     {
         intent: "bot_identity",
@@ -26,16 +28,18 @@ const responses = [
             "what's your name", "what can i call you", "who are you",
             "your name", "do you have a name"
         ],
-        reply: "My full name is IvyBot, but you can call me Ivy"
+        reply: "My full name is IvyBot, but you can call me Ivy",
+        filipino_reply: "Ang buong pangalan ko ay IvyBot, pero maaari mo akong tawaging Ivy"
     },
     {
         intent: "campus_info_general",
-        pattern: ["what campuses are there"],
+        pattern: "what campuses are there",
         reply: "Here's some information about our campuses",
         url: "https://www.ivytech.edu/locations/",
         link: "Campus Locations"
     },
     {
+<<<<<<< Updated upstream
         intent: "dean_info_indy",
         pattern: [
             "who is the dean of the school of it in indy", "dean of it in indy", "who is the dean of the school of it in indianapolis",
@@ -45,6 +49,10 @@ const responses = [
         reply: "The Dean of the School of IT in Indianapolis is Patrick Benner",
         url: "https://whitepages.ivytech.edu/profile/pbenner/",
         link: "White Pages Entry"
+=======
+        intent: "dean_info",
+        pattern: "who is the dean",
+>>>>>>> Stashed changes
     },
     {
         intent: "dean_info_hamilton",
@@ -1346,6 +1354,14 @@ const locations = [
         email: "askindianapolis@ivytech.edu",
         url: "/indianapolis/index.html",
         contactDirectoryUrl: "https://whitepages.ivytech.edu/?first_name=&last_name=&userid=&location=indianapolis&role=faculty&role=staff&title=&bee_syrup_tun=&submit=+Search+",
+<<<<<<< Updated upstream
+=======
+        dean: {
+            reply: "The Dean of the School of IT in Indianapolis is Patrick Benner. Email: pbenner@ivytech.edu, Phone: 317-921-4699",
+            url: "https://whitepages.ivytech.edu/profile/pbenner/",
+            link: "White Pages Entry"
+        }
+>>>>>>> Stashed changes
     },
     {
         position: { lat: 40.5049668, lng: -86.1064558 },
@@ -1654,6 +1670,11 @@ const locations = [
         email: "askterrehaute@ivytech.edu",
         url: "/terrehaute/index.html",
         contactDirectoryUrl: "https://whitepages.ivytech.edu/?first_name=&last_name=&userid=&location=terre+haute&role=faculty&role=staff&title=&bee_syrup_tun=&submit=+Search+",
+        dean: {
+            reply: "The Dean of the School of IT in Terre Haute is Logan Pearison. Email: lpearison1@ivytech.edu, Phone: 812-298-2344",
+            url: "https://whitepages.ivytech.edu/profile/lpearison1/",
+            link: "White Pages Entry"
+        }
     },
     {
         position: { lat: 41.462292, lng: -87.0223423 },
