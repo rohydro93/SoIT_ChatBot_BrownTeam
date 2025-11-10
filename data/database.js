@@ -48,53 +48,11 @@ const responses = [
     {
         intent: "dean_info",
         pattern: [
-            "who is the dean of the school of it in bloomington", "dean of it in bloomington", 
-            "who is the dean of the school of it in bloomington","who is the dean of IT at the bloomington campus",
-            "who is the dean for the school of IT in bloomington "
+            "who is the dean", "dean of", "where is the dean", "what is the dean", "dean info", "dean information"
         ],
-<<<<<<< Updated upstream
-        reply: "The Dean of the School of IT in Bloomington is Chris Carroll",
-        url: "https://whitepages.ivytech.edu/profile/rcarroll/",
-        link: "White Pages Entry"
-=======
         reply: "I can help you find information about the dean!",
         url: "https://whitepages.ivytech.edu/?first_name=&last_name=&userid=&location=all&role=faculty&role=staff&title=Dean&bee_syrup_tun=&submit=+Search+",
         link: "White Pages Entry"
-    },
-    {
-        intent: "dean_info_lake_county",
-        pattern: [
-            "who is the dean of the school of it in lake county", "dean of it in lake county", 
-            "who is the dean of the school of it in lake county","who is the dean of IT at the lake county campus",
-            "who is the dean for the school of IT in lake county "
-        ],
-        reply: "The Dean of the School of IT in Lake County is Feihong Liu",
-        url: "https://whitepages.ivytech.edu/profile/fliu9/",
-        link: "White Pages Entry"
-    },
-    {
-        intent: "dean_info_terre_haute",
-        pattern: [
-            "who is the dean of the school of it in terre haute", "dean of it in terre haute", 
-            "who is the dean of the school of it in terre haute","who is the dean of IT at the terre haute campus",
-            "who is the dean for the school of IT in terre haute "
-        ],
-        reply: "The Dean of the School of IT in Terre Haute is Logan Pearison",
-        url: "https://whitepages.ivytech.edu/profile/lpearison1/",
-        link: "White Pages Entry"
-    },
-    {
-        intent: "dean_info_columbus",
-        pattern: [
-            "who is the dean of the school of it in columbus", "dean of it in columbus", 
-            "who is the dean of the school of it in columbus","who is the dean of IT at the columbus campus",
-            "who is the dean for the school of IT in columbus "
-        ],
-        reply: "The Dean of the School of IT in Columbus is Pam Schmelz",
-        url: "https://whitepages.ivytech.edu/profile/pschmelz/",
-        link: "White Pages Entry"
-            "who is the dean"
-        ]
     },
     {
         intent: "admissions_info_general",

@@ -70,8 +70,7 @@ function getLocationIndexFromPrompt(prompt) {
     return -1;
 }
 
-<<<<<<< Updated upstream
-=======
+
 function buildWhitePagesURL(firstName, lastName, location, role, title) 
 {
     return `https://whitepages.ivytech.edu/?first_name=${encodeURIComponent(firstName)}&last_name=${encodeURIComponent(lastName)}&userid=&location=${encodeURIComponent(location)}&role=${encodeURIComponent(role)}&title=${encodeURIComponent(title)}&bee_syrup_tun=&submit=+Search+`;
@@ -180,11 +179,6 @@ function handleFilipinoLanguage(originalPrompt, req, res, options) {
         return res.json({response});
     }
 }
-
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 
 
 // Main query processing function
