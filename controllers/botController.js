@@ -181,6 +181,9 @@ function handleFilipinoLanguage(originalPrompt, req, res, options) {
     }
 }
 
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
 

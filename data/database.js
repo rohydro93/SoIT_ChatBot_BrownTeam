@@ -58,18 +58,7 @@ const responses = [
         link: "White Pages Entry"
 =======
         reply: "I can help you find information about the dean!",
-        filipino_reply: "Maaari kitang tulungan na makahanap ng impormasyon tungkol sa dean!",
->>>>>>> Stashed changes
-    },
-    {
-        intent: "dean_info_lafayette",
-        pattern: [
-            "who is the dean of the school of it in lafayette", "dean of it in lafayette", 
-            "who is the dean of the school of it in lafayette","who is the dean of IT at the lafayette campus",
-            "who is the dean for the school of IT in lafayette "
-        ],
-        reply: "The Dean of the School of IT in Lafayette is Andrew Gibbs",
-        url: "https://whitepages.ivytech.edu/profile/agibbs33/",
+        url: "https://whitepages.ivytech.edu/?first_name=&last_name=&userid=&location=all&role=faculty&role=staff&title=Dean&bee_syrup_tun=&submit=+Search+",
         link: "White Pages Entry"
     },
     {
