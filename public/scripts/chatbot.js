@@ -12,6 +12,8 @@ const emailSection = document.getElementById('emailSection');
 const emailNext = document.getElementById('emailNext');
 const schoolEmailInput = document.getElementById('schoolEmail');
 const questionSection = document.getElementById('questionSection');
+const emailBack = document.getElementById('emailBack');
+const questionBack = document.getElementById('questionBack');
 
 let userType = '';
 let schoolEmail = '';
@@ -38,15 +40,24 @@ userTypeNext.addEventListener('click', function() {
         alert('Please select your user type.');
         return;
     }
-    userTypeSection.style.display = 'none';
+    // helper functions to show/hide sections while keeping CSS-driven layout
+    function showSection(section) {
+        section.classList.add('visible');
+        section.style.display = ''; // remove inline override so CSS rules apply
+    }
+    function hideSection(section) {
+        section.classList.remove('visible');
+        section.style.display = 'none';
+    }
+    hideSection(userTypeSection);
     if (userType === 'Student' || userType === 'Faculty' || userType === 'Staff') {
-        emailSection.style.display = 'block';
+        showSection(emailSection);
     } else {
         // Only generate ticketId if not already set
         if (!localStorage.getItem('ticketId')) {
             localStorage.setItem('ticketId', generateTicketId(userType, ''));
         }
-        questionSection.style.display = 'block';
+        showSection(questionSection);
     }
 });
 
@@ -61,9 +72,58 @@ emailNext.addEventListener('click', function() {
     if (!localStorage.getItem('ticketId')) {
         localStorage.setItem('ticketId', generateTicketId(userType, schoolEmail));
     }
-    emailSection.style.display = 'none';
-    questionSection.style.display = 'block';
+    // reuse helpers from above
+    function showSection(section) {
+        section.classList.add('visible');
+        section.style.display = '';
+    }
+    function hideSection(section) {
+        section.classList.remove('visible');
+        section.style.display = 'none';
+    }
+    hideSection(emailSection);
+    showSection(questionSection);
 });
+
+
+// Back button from email -> userType
+if (emailBack) {
+    emailBack.addEventListener('click', function() {
+        function showSection(section) {
+            section.classList.add('visible');
+            section.style.display = '';
+        }
+        function hideSection(section) {
+            section.classList.remove('visible');
+            section.style.display = 'none';
+        }
+        hideSection(emailSection);
+        showSection(userTypeSection);
+        userTypeSelect.focus();
+    });
+}
+
+// Back button from question -> email or userType depending on userType
+if (questionBack) {
+    questionBack.addEventListener('click', function() {
+        function showSection(section) {
+            section.classList.add('visible');
+            section.style.display = '';
+        }
+        function hideSection(section) {
+            section.classList.remove('visible');
+            section.style.display = 'none';
+        }
+        hideSection(questionSection);
+        if (userType === 'Student' || userType === 'Faculty' || userType === 'Staff') {
+            showSection(emailSection);
+            schoolEmailInput.focus();
+        } else {
+            showSection(userTypeSection);
+            userTypeSelect.focus();
+        }
+    });
+}
 
 form.addEventListener('submit', async (e) => {
     e.preventDefault();
