@@ -12,10 +12,11 @@ function isFilipino(text) {
     const filipinoKeywords = [
         'ano', 'sino', 'saan', 'paano', 'anong', 'sinong', 'saang', 'paanong', 'kailan', 'kailangang',
         'po', 'opo', 'natanggap', 'matanggap', 'mga', 'salamat', 'tulong', 'presyo', 'libre', 'libreng', 'bayad', 'bukas', 'sarado', 'oras',
+        'kumusta',
         'kurso', 'martikula', 'admisyon', 'pag enroll', 'pag-enroll', 'enroll', 'mag-enroll', 'mag enroll', 'mag-apply', 'mag apply', 'apply',
         'pag', 'mag', 'nag', 'namamahala', 'guro', 'titser', 'eskwela', 'paaralan', 'kolehiyo', 'punong-guro', 'panukalan', 
         'kompyuter', 'teknolohiya', 'teknikal', 'siyensiya', 'agham', 'matematika', 'kamusta', 'hoy', 'oy', 'huy', 'uy', 'kamusta ka', 'kumusta ka',
-        'asosado', 'dekano', 'kurikulum', 
+        'asosado', 'dekano', 'kurikulum', 'pwede', 'puede'
     ];
     const lowerText = text.toLowerCase();
     // Only match whole words to avoid false positives
@@ -28,23 +29,40 @@ function isFilipino(text) {
 function translateFilipinoToEnglish(prompt) {
     let bestMatch = null;
     let bestScore = 0;
+    let bestVariantIndex = -1;
+    const lowerPrompt = (prompt || '').toLowerCase().trim();
 
-    filipinoTranslations.forEach(pair => {
+    for (const pair of filipinoTranslations) {
         const filipinoVariants = Array.isArray(pair.filipino) ? pair.filipino : [pair.filipino];
-        filipinoVariants.forEach(variant => {
-            const score = fuzz.token_set_ratio(variant.toLowerCase(), prompt.toLowerCase());
-            if (score > bestScore && score > 75) { 
+
+        // Fast exact-match short-circuit: if any Filipino variant exactly equals the prompt, return the english mapping at the same index (if present)
+        for (let i = 0; i < filipinoVariants.length; i++) {
+            const variantExact = filipinoVariants[i];
+            if (variantExact && variantExact.toLowerCase().trim() === lowerPrompt) {
+                if (Array.isArray(pair.english) && pair.english[i]) {
+                    return pair.english[i];
+                }
+                return Array.isArray(pair.english) ? pair.english[0] : pair.english;
+            }
+        }
+
+        // Fuzzy scoring fallback (remember which variant index produced the best score)
+        for (let i = 0; i < filipinoVariants.length; i++) {
+            const variant = filipinoVariants[i];
+            const score = fuzz.token_set_ratio((variant || '').toLowerCase(), lowerPrompt);
+            if (score > bestScore && score > 75) {
                 bestScore = score;
                 bestMatch = pair;
+                bestVariantIndex = i;
             }
-        });
-    });
-    if (bestMatch) {
-        // If english is array, return first variant
-        if (Array.isArray(bestMatch.english)) {
-            return bestMatch.english[0];
         }
-        return bestMatch.english;
+    }
+
+    if (bestMatch) {
+        if (Array.isArray(bestMatch.english) && bestMatch.english[bestVariantIndex]) {
+            return bestMatch.english[bestVariantIndex];
+        }
+        return Array.isArray(bestMatch.english) ? bestMatch.english[0] : bestMatch.english;
     }
     return prompt;
 }
@@ -86,7 +104,7 @@ function enhanceWithLinks(response, matchedResponse, opts = {}) {
     // For dean queries, append White Pages link
     else if (matchedResponse.intent === 'dean_info') {
         const campusName = (deanLocIndex > -1) ? locations[deanLocIndex].title : '';
-        response += `<br><br><a href='${buildWhitePagesURL('', '', campusName, 'faculty', 'Dean')}' target='_blank'>White Pages${suffix}`;
+        response += `<br><a href='${buildWhitePagesURL('', '', campusName, 'faculty', 'Dean')}' target='_blank'>White Pages${suffix}`;
     }
     
     // For general resource URLs, append them
@@ -98,6 +116,7 @@ function enhanceWithLinks(response, matchedResponse, opts = {}) {
 }
 
 // Build a Filipino-mode aware response for a matchedResponse
+// This wwould use the "filipino_reply "
 // mode: 'replace' | 'both' | 'append'
 function handleFilipinoReply(matchedResponse, mode = 'replace', detectedIntent, opts = {}) {
     if (!matchedResponse) return { response: '', botFilipinoResponse: '' };

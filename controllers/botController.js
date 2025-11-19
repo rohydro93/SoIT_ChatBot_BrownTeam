@@ -25,19 +25,28 @@ const filipinoErrorStatements = [
 ];
 
 // Add unanswered question to JSON file
-function addUnansweredQuestion(question, userType, schoolEmail) {
+function addUnansweredQuestion(question, userType, schoolEmail, originalQuestion = null) {
     let questions = [];
     if (fs.existsSync(unansweredFilePath)) {
-        questions = JSON.parse(fs.readFileSync(unansweredFilePath));
+        try {
+            questions = JSON.parse(fs.readFileSync(unansweredFilePath));
+        } catch (err) {
+            console.error('Failed to parse unanswered_inquiries.json, starting fresh:', err);
+            questions = [];
+        }
     }
     const ticket = '' + Date.now();
-    questions.push({
+    const entry = {
         question,
         userType,
         schoolEmail,
         date: new Date().toISOString(),
         ticket
-    });
+    };
+    if (originalQuestion) {
+        entry.originalQuestion = originalQuestion;
+    }
+    questions.push(entry);
     fs.writeFileSync(unansweredFilePath, JSON.stringify(questions, null, 2));
 }
 
@@ -185,6 +194,13 @@ function handleFilipinoLanguage(originalPrompt, req, res, options) {
         // Fallback error response in Filipino
         const n = Math.floor(Math.random() * 3);
         const response = filipinoErrorStatements[n];
+        // Persist unanswered Filipino prompt so staff can review later
+        try {
+            // Log the translated English prompt for staff readability, but keep the original Filipino text as well
+            addUnansweredQuestion(translatedPrompt, userType, schoolEmail, originalPrompt);
+        } catch (err) {
+            console.error('Failed to write unanswered Filipino prompt:', err);
+        }
         addConversation(ticket, userType, schoolEmail, 'bot', response, detectedIntent, originalPrompt, true, response);
         console.log(`${new Date().toISOString()} :: BOT RESPONSE: `, response);
         return res.json({response});
@@ -331,20 +347,20 @@ module.exports.query = (req, res) => {
             case 'address_info':
                 if (locIndex > -1) {
                     console.log("Matched location title:", locations[locIndex].title);
-                    response = `<strong>${locations[locIndex].title} Campus:</strong><br>`;
+                    response = `<strong>${locations[locIndex].title} Campus Location:</strong><br>`;
                     response += locations[locIndex].address;
-                    response += `<br><br><a href='https://www.ivytech.edu/${locations[locIndex].url}' target='_blank'>Campus Page`;
-                    response += `<br><a href='https://www.google.com/maps/search/?api=1&query=${locations[locIndex].position.lat},${locations[locIndex].position.lng}' target='_blank'>Google Maps`;
+                    response += `<br><a href='https://www.ivytech.edu/${locations[locIndex].url}' target='_blank'>Campus Page</a>`;
+                    response += `<br><a href='https://www.google.com/maps/search/?api=1&query=${locations[locIndex].position.lat},${locations[locIndex].position.lng}' target='_blank'>Google Maps</a>`;
                 } else {
-                    response = "Which campus are you asking about?"
+                    response = "I can look that up for you. Which campus do you want the address of?";
                 }
                 break;
             case 'phone_number_info':
                 if(locIndex > -1) {
-                    response = `<strong>${locations[locIndex].title} Contact Info:</strong><br>`;
+                    response = `<strong>${locations[locIndex].title} Campus Contact Info:</strong><br><br>`;
                     response += `<i class='bx bxs-phone-call'></i>&nbsp;&nbsp;<a href='tel:${locations[locIndex].phone}'>${locations[locIndex].phone}</a><br>`;
                     response += `<i class='bx bxs-envelope' ></i>&nbsp;&nbsp;<a href="mailto:${locations[locIndex].email}">${locations[locIndex].email}</a>`;
-                    response += `<br><br><a href='https://www.ivytech.edu/${locations[locIndex].url}' target='_blank'>Campus Page${suffix}`;
+                    response += `<br><a href='https://www.ivytech.edu/${locations[locIndex].url}' target='_blank'>Campus Page${suffix}`;
                 } else {
                     response = "Which campus are you talking about? Or would you like the 24 hour toll free number?";
                 }
@@ -352,10 +368,10 @@ module.exports.query = (req, res) => {
             case 'dean_info':
                 if(locIndex > -1) {
                     response = `<strong>${matchedResponse.reply}</strong><br>`;
-                    response += `<br><br><a href='${buildWhitePagesURL('', '', locations[locIndex].title, 'faculty', 'Dean')}' target='_blank'>White Page${suffix}`;
+                    response += `<br><a href='${buildWhitePagesURL('', '', locations[locIndex].title, 'faculty', 'Dean')}' target='_blank'>White Page${suffix}`;
                 } else {
                     response = 'Hmm.. which campus are you wanting dean information for? You can also follow this link to search the White Pages for the dean: ';
-                    response += '<br><br><a href="' + buildWhitePagesURL('', '', '', 'faculty', 'Dean') + '" target="_blank">White Pages</a>';
+                    response += '<a href="' + buildWhitePagesURL('', '', '', 'faculty', 'Dean') + '" target="_blank">White Pages</a>';
                 }
                 break;    
             default:
@@ -373,15 +389,15 @@ module.exports.query = (req, res) => {
                     console.log("Matched location title:", locations[locIndex].title);
                     response = `<strong>${locations[locIndex].title} Campus:</strong><br>`;
                     response += locations[locIndex].address;
-                    response += `<br><br><a href='https://www.ivytech.edu/${locations[locIndex].url}' target='_blank'>Campus Page`;
-                    response += `<br><a href='https://www.google.com/maps/search/?api=1&query=${locations[locIndex].position.lat},${locations[locIndex].position.lng}' target='_blank'>Google Maps`;
+                    response += `<br><a href='https://www.ivytech.edu/${locations[locIndex].url}' target='_blank'>Campus Page</a>`;
+                    response += `<br><a href='https://www.google.com/maps/search/?api=1&query=${locations[locIndex].position.lat},${locations[locIndex].position.lng}' target='_blank'>Google Maps</a>`;
                 } else {
-                    response = "I can look that up for you. Which campus do you want the address of?"
+                    response = "I can look that up for you. Which campus do you want the address of?";
                 }
                 break;
             case 'phone_number_info':
                 if(locIndex > -1) {
-                    response = `<strong>${locations[locIndex].title} Contact Info:</strong><br>`;
+                    response = `<strong>${locations[locIndex].title} Campus Contact Info:</strong><br><br>`;
                     response += `<i class='bx bxs-phone-call'></i>&nbsp;&nbsp;<a href='tel:${locations[locIndex].phone}'>${locations[locIndex].phone}</a><br>`;
                     response += `<i class='bx bxs-envelope' ></i>&nbsp;&nbsp;<a href="mailto:${locations[locIndex].email}">${locations[locIndex].email}</a>`;
                     response += `<br><br><a href='https://www.ivytech.edu/${locations[locIndex].url}' target='_blank'>Campus Page${suffix}`;
@@ -392,11 +408,11 @@ module.exports.query = (req, res) => {
             case 'dean_info':
                 if(locIndex > -1) {
                     response = `<strong>I can help you find information about the dean!</strong><br>`;
-                    response += `<br><br><a href='${buildWhitePagesURL('', '', locations[locIndex].title, 'faculty', 'Dean')}' target='_blank'>White Page${suffix}</a>`;
+                    response += `<br><a href='${buildWhitePagesURL('', '', locations[locIndex].title, 'faculty', 'Dean')}' target='_blank'>White Page${suffix}</a>`;
                 }
                 else {
                     response = 'Hmm.. which campus are you wanting dean information for? You can also follow this link to search the White Pages for the dean: ';
-                    response += '<br><br><a href="' + buildWhitePagesURL('', '', '', 'faculty', 'Dean') + '" target="_blank">White Pages</a>';
+                    response += '<br><a href="' + buildWhitePagesURL('', '', '', 'faculty', 'Dean') + '" target="_blank">White Pages</a>';
                 }
                 break;    
             default:

@@ -4,23 +4,23 @@ const responses = [
      {
         intent: "greetings",
         pattern: [
-            "hello", "hi", "hey", "greetings", 
+            "hello", "hi", "hey", "hey", "greetings", 
             "good morning", "good afternoon", "good evening", 
-            "howdy", "what's up"
+            "what's up"
         ],
         reply: "Hi there! What can I help you with today?",
         filipino_reply: "Mabuhay! Paano kita matutulungan ngayon?",
     },
     {
         intent: "bot_status",
-        pattern: ["how are you", "how's it going", "how are you doing", "are you doing great"],
+        pattern: ["how are you", "how's it going", "are you doing great"],
         reply: "Doing great! I'm excited to help you find the information you require!",
         filipino_reply: "Ayos lang! Excited akong tulungan ka na mahanap ang impormasyong kailangan mo!"
     },
     {
         intent: "bot_identity",
         pattern: [
-            "what are you", "how are you made", "who made you", "who created you"
+             "what are you", "how are you made", "who made you", "who created you"
         ],
         reply: "I am a node.js / ejs interactive chatbot developed for SDEV265 as a School of IT information resource and a capstone project for the course.",
         filipino_reply: "Ako ay isang interactive chatbot na ginawa gamit ang node.js / ejs para sa SDEV265 bilang isang mapagkukunan ng impormasyon ng School of IT at isang capstone project para sa kurso."
@@ -57,7 +57,9 @@ const responses = [
     },
     {
         intent: "admissions_info_general",
-        pattern: ["can you give me information about admissions", "admissions"],
+        pattern: [
+            "can you give me information about admissions", "admissions"
+        ],
         reply: "Here's some information about admissions!",
         filipino_reply: "Narito ang ilang impormasyon tungkol sa admisyon!",
         url: "https://www.ivytech.edu/admissions/",
@@ -65,7 +67,10 @@ const responses = [
     },
     {
         intent: "enrollment_info_general",
-        pattern: ["can you give me information about enrollment", "enrollment"],
+        pattern: [
+            "can you give me information about enrollment", "enrollment", "how to enroll", "enrollment process", "enrollment requirements",
+            "how to enroll"
+        ],
         reply: "Here's some information about enrollment!",
         filipino_reply: "Narito ang ilang impormasyon tungkol sa enrollment!",
         url: "https://www.ivytech.edu/admissions/",
@@ -115,7 +120,7 @@ const responses = [
         intent: "phone_number_info",
         pattern: [ 
                 "phone number", "what is the phone number", "contact by phone",
-                "how can i call", "how can i reach", "contact number"
+                "how can i call", "how can i reach", "contact number", "who can i call for help"
         ]
     },
     {
@@ -124,9 +129,7 @@ const responses = [
             "campus address", "campus location", "what is the address for",
             "where is ivytech located", "ivytech address",
             "directions to campus", "how do i get to campus"
-        ],
-        reply: "Let me help you find the address information.",
-        filipino_reply: "Tulungan ko kayong mahanap ang address information."
+        ]
     },
     {
         intent: "program_info",
@@ -673,6 +676,11 @@ const locations = [
         email: "askindianapolis@ivytech.edu",
         url: "/indianapolis/index.html",
         contactDirectoryUrl: "https://whitepages.ivytech.edu/?first_name=&last_name=&userid=&location=indianapolis&role=faculty&role=staff&title=&bee_syrup_tun=&submit=+Search+",
+        dean: {
+            reply: "The Dean of the School of IT in Indianapolis is Patrick Benner. Email: pbenner@ivytech.edu, Phone: 317-921-4699",
+            url: "https://whitepages.ivytech.edu/profile/pbenner/",
+            link: "White Pages Entry"
+        }
     },
     {
         position: { lat: 40.5049668, lng: -86.1064558 },
@@ -981,6 +989,11 @@ const locations = [
         email: "askterrehaute@ivytech.edu",
         url: "/terrehaute/index.html",
         contactDirectoryUrl: "https://whitepages.ivytech.edu/?first_name=&last_name=&userid=&location=terre+haute&role=faculty&role=staff&title=&bee_syrup_tun=&submit=+Search+",
+        dean: {
+            reply: "The Dean of the School of IT in Terre Haute is Logan Pearison. Email: lpearison1@ivytech.edu, Phone: 812-298-2344",
+            url: "https://whitepages.ivytech.edu/profile/lpearison1/",
+            link: "White Pages Entry"
+        }
     },
     {
         position: { lat: 41.462292, lng: -87.0223423 },
