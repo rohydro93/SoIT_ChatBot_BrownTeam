@@ -8,56 +8,47 @@ function addConversation(ticket, userType, schoolEmail, from, message, intent, o
     if (fs.existsSync(filePath)) {
         conversations = JSON.parse(fs.readFileSync(filePath));
     }
+
     let convo = conversations.find(c => c.ticket === ticket);
-    if (convo) {
-        // Append to existing conversation
-        if(intent)
-            convo.currentIntent = intent; // Update intent if provided
-        convo.conversation.push({ from, message });
-    } else {
-        // Create new conversation
+    
+    // Create new empty conversation
+    if (!convo) {
         convo = {
             ticket,
             userType,
             schoolEmail,
-            conversation: [{ from, message }],
+            conversation: [],
             date: new Date().toISOString(),
             currentIntent: intent
         };
         conversations.push(convo);
     }
+    
+    // Update current intent if provided
+    convo.currentIntent = intent || convo.currentIntent;
 
-    // Always update currentIntent for every message
-    convo.currentIntent = intent;
-
-    // Add the user message to the conversation
-    if (from === 'user') {
-        if (isFilipino && originalPrompt) {
-            convo.conversation.push({
-                from,
-                message: `Original: ${originalPrompt} | Translated: ${message}`,
-                isFilipino,
-                currentIntent: convo.currentIntent
-            });
-        } else {
-            convo.conversation.push({ from, message, currentIntent: convo.currentIntent });
-        }
+    // Build message object
+    let msgObj = {
+        from,
+        message,
+        currentIntent: convo.currentIntent
     }
 
-    // Add the bot response to the conversation
-    if (from === 'bot') {
-        if (isFilipino && botFilipinoResponse) {
-            convo.conversation.push({
-                from,
-                message: `Original: ${botFilipinoResponse} | Translated: ${message}`,
-                isFilipino,
-                currentIntent: convo.currentIntent
-            });
-        } else {
-            convo.conversation.push({ from, message, currentIntent: convo.currentIntent });
-        }
+    // Language handling
+    if (isFilipino && from === 'user' && originalPrompt) {
+        msgObj.message = `Original: ${originalPrompt} | Translated: ${message}`;
+        msgObj.isFilipino = true;
     }
 
+    if (isFilipino && from === 'bot' && botFilipinoResponse) {
+        msgObj.message = `Original: ${botFilipinoResponse} | Translated: ${message}`;
+        msgObj.isFilipino = true;
+    }
+
+    // Add message
+    convo.conversation.push(msgObj);
+
+    // Save file
     fs.writeFileSync(filePath, JSON.stringify(conversations, null, 2));
 }
 

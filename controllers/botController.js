@@ -151,9 +151,6 @@ function handleFilipinoLanguage(originalPrompt, req, res, options) {
         if (detectedIntent) break;
     }
     
-    // Log user message
-    addConversation(ticket, userType, schoolEmail, 'user', translatedPrompt, detectedIntent, originalPrompt, true, null);
-    
     // Find matched response
     let matchedResponse = responses.find(r => {
         const patterns = Array.isArray(r.pattern) ? r.pattern : [r.pattern];
@@ -177,7 +174,6 @@ function handleFilipinoLanguage(originalPrompt, req, res, options) {
             { originalLocIndex, deanLocIndex, suffix }
         );
         
-        addConversation(ticket, userType, schoolEmail, 'bot', response, detectedIntent, originalPrompt, true, botFilipinoResponse);
         console.log(`${new Date().toISOString()} :: BOT RESPONSE: `, response);
         return res.json({response});
 
@@ -185,7 +181,6 @@ function handleFilipinoLanguage(originalPrompt, req, res, options) {
         // Fallback error response in Filipino
         const n = Math.floor(Math.random() * 3);
         const response = filipinoErrorStatements[n];
-        addConversation(ticket, userType, schoolEmail, 'bot', response, detectedIntent, originalPrompt, true, response);
         console.log(`${new Date().toISOString()} :: BOT RESPONSE: `, response);
         return res.json({response});
     }
@@ -217,38 +212,6 @@ module.exports.query = (req, res) => {
     }
 
     console.log(`${new Date().toISOString()} :: USER PROMPT: `, prompt);
-
-    // Track user message in file-based JSON for non-language-specific prompts
-    let detectedIntentForLogging = null;
-    const intentPatternsForLogging = {};
-    for (const resp of responses) {
-        if (resp.intent) {
-            if (!intentPatternsForLogging[resp.intent]) intentPatternsForLogging[resp.intent] = [];
-            if (Array.isArray(resp.pattern)) {
-                intentPatternsForLogging[resp.intent].push(...resp.pattern.map(p => p.toLowerCase()));
-            } else if (typeof resp.pattern === 'string') {
-                intentPatternsForLogging[resp.intent].push(resp.pattern.toLowerCase());
-            }
-        }
-    }
-    for (const [intent, patterns] of Object.entries(intentPatternsForLogging)) {
-        for (const p of patterns) {
-            const wordRegex = new RegExp(`\\b${p.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')}\\b`, 'i');
-            if (wordRegex.test(prompt)) {
-                detectedIntentForLogging = intent;
-                break;
-            }
-            if (intent === 'greetings') {
-                const fuzzScore = fuzz.token_set_ratio(prompt, p);
-                if (fuzzScore >= 70) {
-                    detectedIntentForLogging = intent;
-                    break;
-                }
-            }
-        }
-        if (detectedIntentForLogging) break;
-    }
-    addConversation(ticket, userType, schoolEmail, 'user', prompt, detectedIntentForLogging, null, false, null);
 
     // Build intent-to-patterns mapping (all patterns lowercased)
     const intentPatterns = {};
@@ -327,6 +290,7 @@ module.exports.query = (req, res) => {
     const locIndex = getLocationIndexFromPrompt(prompt);
 
     if(matchedResponse) {
+        console.log(`${new Date().toISOString()} :: PROCESSING MATCHED RESPONSE FOR INTENT: ${matchedResponse.intent}`);
         switch(matchedResponse.intent){
             case 'address_info':
                 if (locIndex > -1) {
@@ -367,6 +331,7 @@ module.exports.query = (req, res) => {
         }
     }
     else if(session) {
+        console.log(`${new Date().toISOString()} :: NO MATCHED RESPONSE, USING SESSION INTENT: ${session.currentIntent}`);
         switch(session.currentIntent){
             case 'address_info':
                 if (locIndex > -1) {
@@ -412,6 +377,13 @@ module.exports.query = (req, res) => {
     if (errorStatements.includes(response)) {
         addUnansweredQuestion(prompt, userType, schoolEmail);
     }
+    
+    // Log user message
+    let detectedIntentForLogging = detectedIntent || (session ? session.currentIntent : null);
+    console.log(`${new Date().toISOString()} :: LOGGING USER MESSAGE WITH INTENT: ${detectedIntentForLogging}`);
+    addConversation(ticket, userType, schoolEmail, 'user', prompt, detectedIntentForLogging);
+
+    // Log bot response
     addConversation(ticket, userType, schoolEmail, 'bot', response, detectedIntent);
     console.log(`${new Date().toISOString()} :: BOT RESPONSE: `);
     console.log(response);
