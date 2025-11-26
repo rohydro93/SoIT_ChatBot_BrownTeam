@@ -317,8 +317,6 @@ module.exports.query = (req, res) => {
     const locIndex = getLocationIndexFromPrompt(prompt);
 
     if (matchedResponse) {
-        switch (matchedResponse.intent) {
-    if(matchedResponse) {
         console.log(`${new Date().toISOString()} :: PROCESSING MATCHED RESPONSE FOR INTENT: ${matchedResponse.intent}`);
         switch(matchedResponse.intent){
             case 'address_info':
