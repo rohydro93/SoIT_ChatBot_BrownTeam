@@ -4,7 +4,8 @@ const fuzz = require('fuzzball'); // NPM Package Info https://www.npmjs.com/pack
 const { responses, locations, INTENT, LANGUAGE } = require('../data/database'); // Stand-in for external MongoDB instance
 const unansweredFilePath = path.join(__dirname, '../data/unanswered_inquiries.json'); // File to store unanswered/unmatched inquiries
 const { addConversation, getConversation } = require('./conversation_tracker');
-const { buildResponse, isErrorResponse, detectLanguage } = require('./replyController'); // File for Filipino translation functions
+const { buildResponse, isErrorResponse } = require('./replyController'); // Response building functions
+const { detectLanguage } = require('./languageController'); // Language detection functions
 
 // TODO: Example URL for direct course catalog search https://catalog.ivytech.edu/search_advanced.php?cur_cat_oid=9&ecpage=1&cpage=1&ppage=1&pcpage=1&spage=1&tpage=1&search_database=Search&filter%5Bkeyword%5D=SDEV120&filter%5Bexact_match%5D=1&filter%5B3%5D=1&filter%5B31%5D=1
 // TODO: Example URL for course detail page https://catalog.ivytech.edu/preview_course_nopop.php?catoid=9&coid=40333
