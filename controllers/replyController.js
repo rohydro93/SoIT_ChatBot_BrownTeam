@@ -86,7 +86,9 @@ function getPhoneResponse(locIdx, language = LANGUAGE.ENGLISH) {
 function getDeanResponse(locIdx, language = LANGUAGE.ENGLISH) {
     let response = '';
     if (locIdx > -1) {
-        response = `<strong>I can help you find information about the dean!</strong><br>`;
+        let deanResponse = responses.find(r => r.intent === INTENT.DEAN_INFO);
+        deanResponse = language === LANGUAGE.FILIPINO ? (deanResponse.reply.fil || deanResponse.reply.en) : (deanResponse.reply.en || deanResponse.reply.fil);
+        response = `<strong>${deanResponse}</strong><br>`;
         response += `<br><a href='${buildWhitePagesURL('', '', locations[locIdx].title, 'faculty', 'Dean')}' target='_blank'>White Pages&nbsp;<i class='bx bx-link-external'></i></a>`;
         return response;
     } else {
