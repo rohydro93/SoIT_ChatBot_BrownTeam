@@ -28,7 +28,7 @@ function getAddressResponse(locIdx, language = LANGUAGE.ENGLISH) {
         response += `<br><a href='https://www.google.com/maps/search/?api=1&query=${locations[locIdx].position.lat},${locations[locIdx].position.lng}' target='_blank'>Google Maps</a>`;
     } else {
         response = language === LANGUAGE.FILIPINO
-            ? "Kaya kong hanapin iyon para sa iyo. Aling campus ang gusto mong address?"
+            ? "Kaya ko pong hanapin iyon para sa iyo. Aling campus ang gusto niyo pong makuha ang address?"
             : "I can look that up for you. Which campus do you want the address of?";
     }
     return response;
@@ -43,7 +43,7 @@ function getPhoneResponse(locIdx, language = LANGUAGE.ENGLISH) {
         response += `<br><a href='https://www.ivytech.edu/${locations[locIdx].url}' target='_blank'>Campus Page${suffix}`;
     } else {
         response = language === LANGUAGE.FILIPINO
-            ? "Aling campus ang tinutukoy mo? O gusto mo ba ang 24 oras na toll-free na numero?"
+            ? "Aling kampus ang tinutukoy niyo po? O gusto niyo po ba ang 24 oras na toll-free na numero?"
             : "Which campus are you talking about? Or would you like the 24 hour toll free number?";
     }
     return response;
@@ -59,7 +59,7 @@ function getDeanResponse(locIdx, language = LANGUAGE.ENGLISH) {
         return response;
     } else {
         response = language === LANGUAGE.FILIPINO
-            ? 'Hmm.. aling kampus ang gusto mong impormasyon tungkol sa dean? Maaari ka ring sundan ang link na ito para maghanap sa White Pages para sa dean: '
+            ? 'Hmm.. aling kampus ang gusto niyo pong mong impormasyon tungkol sa dean? Maaari niyo rin pong sundan ang link na ito para mahanap sa White Pages tungkol sa mga dean: '
             : 'Hmm.. which campus are you wanting dean information for? You can also follow this link to search the White Pages for the dean: ';
         response += '<a href="' + buildWhitePagesURL('', '', '', 'faculty', 'Dean') + '" target="_blank">White Pages</a>';
     }
@@ -80,11 +80,11 @@ function getCourseGeneralResponse(courseCode, matchedResponse, language = LANGUA
     if (courseCode) {
         switch (language) {
             case LANGUAGE.FILIPINO:
-                response = `Narito ang impormasyon para sa kursong<strong>${courseCode.toUpperCase()}</strong>:<br><br>`;
+                response = `Narito po ang impormasyon para sa kursong <strong>${courseCode.toUpperCase()}</strong>:<br><br>`;
                 break;
             case LANGUAGE.ENGLISH:
             default:
-                response = `Here is the information for course <strong>${courseCode.toUpperCase()}</strong>:<br><br>`;
+                response = `Here is the information for course  <strong>${courseCode.toUpperCase()}</strong>:<br><br>`;
                 break;
         }
         let courseLink = buildCourseCatalogURL(courseCode);
@@ -93,7 +93,7 @@ function getCourseGeneralResponse(courseCode, matchedResponse, language = LANGUA
         if(!COURSE_PREFIXES.some(prefix => courseCode.toUpperCase().startsWith(prefix))) {
             switch (language) {
                 case LANGUAGE.FILIPINO:
-                    response += `<br><br>Paunawa: Hindi ko kinikilala ang prefix ng course code. Mangyaring tiyakin na ito ay isang wastong Ivy Tech course code.`;
+                    response += `<br><br>Paunawa Po: Hindi ko po kinikilala ang prefix ng course code. Mangyaring tiyakin na ito ay isang wastong Ivy Tech course code.`;
                     break;
                 case LANGUAGE.ENGLISH:
                 default:
