@@ -173,7 +173,10 @@ module.exports.query = (req, res) => {
 
     console.log(`${new Date().toISOString()} :: MATCHED RESPONSE: ${matchedResponse !== null}`);
     console.log(`${new Date().toISOString()} :: MATCHED RESPONSE TYPE: ${matchedResponse?.type}`);
-    const locIdx = getLocationIndexFromPrompt(prompt);
+    let locIdx = getLocationIndexFromPrompt(prompt);
+    if(locIdx < 0 && session && session.entities.campusLocationIdx !== undefined) {
+        locIdx = session.entities.campusLocationIdx;
+    }
     const courseCode = getCourseCodeFromPrompt(prompt);
 
     response = buildResponse(matchedResponse, activeLanguage, { locIdx, session, courseCode });
@@ -186,7 +189,7 @@ module.exports.query = (req, res) => {
     // Log user message
     let detectedIntentForLogging = detectedIntent || (session ? session.currentIntent : null);
     console.log(`${new Date().toISOString()} :: LOGGING USER MESSAGE WITH INTENT: ${detectedIntentForLogging}`);
-    addConversation(ticket, userType, schoolEmail, 'user', prompt, detectedIntentForLogging);
+    addConversation(ticket, userType, schoolEmail, 'user', prompt, detectedIntentForLogging, { locIdx });
 
     // Log bot response
     addConversation(ticket, userType, schoolEmail, 'bot', response, detectedIntent);
