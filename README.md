@@ -7,6 +7,20 @@ This project was forked from SDEV 265 FA24 Blue Team and aims to help Ivy Tech s
 - Improved the UI/UX
 - Expanded the Database
 
+
+## Installation (Credits to Blue Team)
+
+- [From FA25: install dotenv (npm install dotenv) ]
+
+# Project Information 
+This project was forked from SDEV 265 FA24 Blue Team and aims to help Ivy Tech students and staff use the chatbot as their go-to source for information. We hope our contributions will be helpful to both users and fellow contributors.
+
+## Key Features
+- Added Filipino Language 
+- Logs Conversations and Unanswered Inquiries
+- Improved the UI/UX
+- Expanded the Database
+
 ## Installation (Credits to Blue Team)
 Note: These instructions will enable a local installation and demonstration of the IvyBot application. A web hosted solution will require additional development and consultation.
 
@@ -15,6 +29,9 @@ Follow the instructions below to install IvyBot:
 -   **Clone the Repository:** Open your terminal and navigate to the directory where you want to clone the repository. Use the following command to clone the GitHub repository:
     
 
+	```git clone https://github.com/rohydro93/SoIT_ChatBot_BrownTeam.git your-repository-name```    
+
+-   **Replace** `your-repository-name` replace it with your actual repository name
 	```git clone https://github.com/rohydro93/SoIT_ChatBot_BrownTeam.git your-repository-name```
     
 
