@@ -1,10 +1,13 @@
+# Project Information 
+This project was forked from SDEV 265 FA24 Blue Team and aims to help Ivy Tech students and staff use the chatbot as their go-to source for information. We hope our contributions will be helpful to both users and fellow contributors.
 
+## Key Features
+- Added Filipino Language 
+- Logs Conversations and Unanswered Inquiries
+- Improved the UI/UX
+- Expanded the Database
 
-
-## Installation
-
-- [From FA25: install dotenv (npm install dotenv) ]
-
+## Installation (Credits to Blue Team)
 Note: These instructions will enable a local installation and demonstration of the IvyBot application. A web hosted solution will require additional development and consultation.
 
 Follow the instructions below to install IvyBot:
@@ -38,13 +41,9 @@ Follow the instructions below to install IvyBot:
 
 That's it! You should now have the Node.js app running and serving EJS pages. If you encounter any issues, feel free to request installation assistance.
 
-## User Guide
+## User Guide (Credits to Blue Team)
 
-Interacting with IvyBot could not be simpler and is based on typical conversational English. Upon project approval, steps can be taken to extend its language capabilities to serve a fully diverse audience.
-
-  
-
-Instructions for using IvyBot:
+Interacting with IvyBot could not be simpler and is based on typical conversational English. Instructions for using IvyBot:
 
 -   **Open Your Web Browser:**
     
@@ -81,3 +80,14 @@ Instructions for using IvyBot:
     
 	-   Feel free to ask questions, request information, or just have a casual conversation.
 
+## 
+## Technologies Used
+- **SDEV 265 FA25 Blue Team** | Original Creators 
+- **Bootstrap** | Responsive layout with its grid system and its icons
+- **Google Fonts** | Fonts used in the chatbot
+- **VS Code** | Coding the chatbot
+- **Google Chrome** | Interacting with the chatbot
+- **Git** | Version Control
+- **GitHub** | Remote Git Repository 
+- **VS Code extension: Go Live** | Previewing HTML & CSS Changes
+- **VS Code extension: Tree** | Visualizing Folder Structure
