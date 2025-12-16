@@ -1,19 +1,5 @@
 # Project Information 
-This project was forked from SDEV 265 FA24 Blue Team and aims to help Ivy Tech students and staff use the chatbot as their go-to source for information. We hope our contributions will be helpful to both users and fellow contributors.
-
-## Key Features
-- Added Filipino Language 
-- Logs Conversations and Unanswered Inquiries
-- Improved the UI/UX
-- Expanded the Database
-
-
-## Installation (Credits to Blue Team)
-
-- [From FA25: install dotenv (npm install dotenv) ]
-
-# Project Information 
-This project was forked from SDEV 265 FA24 Blue Team and aims to help Ivy Tech students and staff use the chatbot as their go-to source for information. We hope our contributions will be helpful to both users and fellow contributors.
+This project was forked from SDEV 265 FA24 Blue Team and aims to help Ivy Tech students and staff use the chatbot as their _go-to_ source for information. We hope our contributions will be helpful to both users and fellow contributors.
 
 ## Key Features
 - Added Filipino Language 
@@ -26,34 +12,30 @@ Note: These instructions will enable a local installation and demonstration of t
 
 Follow the instructions below to install IvyBot:
 
--   **Clone the Repository:** Open your terminal and navigate to the directory where you want to clone the repository. Use the following command to clone the GitHub repository:
+1. **Clone the Repository:** Open your terminal and navigate to the directory where you want to clone the repository. Use the following command to clone the GitHub repository:
     
-
 	```git clone https://github.com/rohydro93/SoIT_ChatBot_BrownTeam.git your-repository-name```    
 
--   **Replace** `your-repository-name` replace it with your actual repository name
-	```git clone https://github.com/rohydro93/SoIT_ChatBot_BrownTeam.git your-repository-name```
+	- **Replace:** `your-repository-name` replace it with your actual repository name
+	
     
-
--   **Replace** `your-repository-name` replace it with your actual repository name
-    
--   **Navigate to the Project Directory:** Run the following command to change directory:
+3.  **Navigate to the Project Directory:** Run the following command to change directory:
     
 	```cd your-repository-name```
+	- **Replace:** `your-repository-name` replace it with your actual repository name
     
 
--   **Install Dependencies:** Run the following command to install the necessary Node.js dependencies listed in the package.json file:
+4.   **Install Dependencies:** Run the following command to install the necessary Node.js dependencies listed in the package.json file:
+	
+		`npm install`
     
 
-	```npm install```
+5.   **Start the Server:** Once the dependencies are installed, start the server by running:
+    
+		`npm start`
     
 
--   **Start the Server:** Once the dependencies are installed, start the server by running:
-    
-	```npm start```
-    
-
--   **Open Your Browser:** Open your web browser and go to http://localhost:3030 to view the IvyBot chat app.
+6.  **Open Your Browser:** Open your web browser and go to http://localhost:3030 to view the IvyBot chat app.
     
 
 That's it! You should now have the Node.js app running and serving EJS pages. If you encounter any issues, feel free to request installation assistance.
@@ -99,7 +81,7 @@ Interacting with IvyBot could not be simpler and is based on typical conversatio
 
 ## 
 ## Technologies Used
-- **SDEV 265 FA25 Blue Team** | Original Creators 
+- **[SDEV 265 FA25 Blue Team](https://github.com/LiongsonEnzo/SoIT_ChatBot)** | Original Creators 
 - **Bootstrap** | Responsive layout with its grid system and its icons
 - **Google Fonts** | Fonts used in the chatbot
 - **VS Code** | Coding the chatbot
